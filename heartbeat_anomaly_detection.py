@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.io import wavfile
+from matplotlib import pyplot as plt
 
 from PIL import Image, ImageChops
 import time
@@ -121,7 +122,7 @@ Y = to_categorical(Y)
 
 
 model = Sequential([
-    Convolution2D(62, (3, 3), input_shape=(302, 465, 3)),
+    Convolution2D(62, (3, 3), input_shape=(None, None, 3)),
     BatchNormalization(),
     Activation("relu"),
     MaxPooling2D((3, 3)),
