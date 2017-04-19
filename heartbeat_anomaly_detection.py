@@ -120,33 +120,6 @@ for _, row in df.iterrows():
 Y = to_categorical(Y)
 
 
-## AlexNet
-
-# model = Sequential()
-
-# model.add(Convolution2D(64, (3, 3), input_shape=(302, 465, 3)))
-# model.add(BatchNormalization())
-# model.add(Activation("relu"))
-# model.add(MaxPooling2D(pool_size=(3, 3)))
-
-# model.add(Convolution2D(128, (3, 3)))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(3, 3)))
-
-# model.add(Convolution2D(192, (6, 6)))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(3, 3)))
-
-# model.add(Flatten())
-# model.add(Dense(4096, kernel_initializer='normal'))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-# model.add(Dense(1000, kernel_initializer='normal'))
-# model.add(BatchNormalization())
-# model.add(Activation('softmax'))
-
 model = Sequential([
     Convolution2D(62, (3, 3), input_shape=(302, 465, 3)),
     BatchNormalization(),
