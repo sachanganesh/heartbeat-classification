@@ -4,6 +4,7 @@ from scipy.io import wavfile
 
 from PIL import Image, ImageChops
 import time
+import warnings
 
 from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from keras.utils import to_categorical
@@ -69,15 +70,15 @@ global_size = (465, 302)
 for i, _ in df.iterrows():
     path = df.ix[i, "fname"].replace("wav", "png")
     df.ix[i, "iname"] = path
-#     graph_spectrogram(df.ix[i, "fname"], True)
+    graph_spectrogram(df.ix[i, "fname"], True)
 
-#     im = trim(Image.open(path))
-#     im.save(path)
+    im = trim(Image.open(path))
+    im.save(path)
 
-#     if im.size != global_size:
-#         print(i, im.size, global_size)
+    if im.size != global_size:
+        warnings.warn("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size), UserWarning)
 
-#     time.sleep(0.05)
+    time.sleep(0.05)
 
 map = {
     "normal": 0,
