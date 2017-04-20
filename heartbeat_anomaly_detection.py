@@ -75,6 +75,8 @@ print("==== GENERATE SPECTROGRAMS ====")
 
 global_size = (496, 369)
 
+num_imgs = 0
+
 for i, _ in df.iterrows():
     path = df.ix[i, "fname"].replace("wav", "png")
     df.ix[i, "iname"] = path
@@ -86,7 +88,10 @@ for i, _ in df.iterrows():
     if im.size != global_size:
         print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
 
+    num_imgs = i
     time.sleep(0.05)
+
+print("Number of images: ", num_imgs)
 
 print("==== MORE PREPROCESSING ====")
 
@@ -171,4 +176,4 @@ model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.1, momentum=0.
 
 model.output_shape
 
-model.fit(X, Y, epochs=100, shuffle=True, validation_split=0.2)
+model.fit(X, Y, epochs=300, shuffle=True, batch_size=25, validation_split=0.2)
