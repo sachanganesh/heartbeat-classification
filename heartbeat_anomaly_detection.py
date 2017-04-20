@@ -176,4 +176,4 @@ model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.1, momentum=0.
 
 model.output_shape
 
-model.fit(X, Y, epochs=300, shuffle=True, batch_size=25, validation_split=0.2)
+model.fit(X, Y, epochs=300, shuffle=True, batch_size=10, validation_split=0.2)
