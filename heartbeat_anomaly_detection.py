@@ -14,7 +14,7 @@ from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from keras.utils import to_categorical
 
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation, Flatten
+from keras.layers.core import Dense, Activation, Flatten, Dropout
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers.normalization import BatchNormalization
