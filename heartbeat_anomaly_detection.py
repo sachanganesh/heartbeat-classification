@@ -9,6 +9,8 @@ from matplotlib import pyplot as plt
 from PIL import Image, ImageChops
 import time
 import warnings
+import os.path
+import json
 
 from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from keras.utils import to_categorical
@@ -77,27 +79,28 @@ for i, _ in df.iterrows():
 
 print("==== GENERATE SPECTROGRAMS ====")
 
-print("... already generated previously ...")
-
 global_size = (496, 369)
 
-num_imgs = 0
+gen = False
 
 for i, _ in df.iterrows():
     path = df.ix[i, "fname"].replace("wav", "png")
     df.ix[i, "iname"] = path
-    # graph_spectrogram(df.ix[i, "fname"], True)
-    #
-    # im = trim(Image.open(path))
-    # im.save(path)
-    #
-    # if im.size != global_size:
-    #     print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
 
-    num_imgs = i
+    if not os.path.isfile(path):
+        gen = True
+        graph_spectrogram(df.ix[i, "fname"], True)
+
+        im = trim(Image.open(path))
+        im.save(path)
+
+        if im.size != global_size:
+            print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
+
     time.sleep(0.05)
 
-print("Number of images: ", num_imgs)
+if not gen:
+    print("... already generated previously ...")
 
 print("==== MORE PREPROCESSING ====")
 
@@ -112,6 +115,7 @@ df = pd.DataFrame()
 df["image"] = o_df["iname"]
 df["label"]  = o_df["label"]
 
+# REMOVE EXTRASYSTOLE SAMPLES
 df = df[df.label != "extrastole"]
 
 for i, _ in df.iterrows():
@@ -120,7 +124,10 @@ for i, _ in df.iterrows():
 X = np.array([])
 Y = np.array([])
 
+cnt = 0
+
 for _, row in df.iterrows():
+    cnt += 1
     img = load_img(row.image)
     x = img_to_array(img)
     x = x.reshape((1,) + x.shape)
@@ -140,6 +147,9 @@ for _, row in df.iterrows():
 
 Y = to_categorical(Y)
 
+print("Number of samples:", cnt)
+
+X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=17)
 
 print("==== TRAINING MODEL ====")
 
@@ -182,12 +192,20 @@ model_path = "./models/model_d/"
 
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-checkpoint = ModelCheckpoint(model_path + "best_d.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
+checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 early_stopping = EarlyStopping(monitor='val_loss', patience=3)
 
-history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint, early_stopping])
+history = model.fit(X_train, y_train, epochs=50, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint, early_stopping])
 
-model.save(model_path + "model_d.h5")
+score = model.evaluate(X_test, y_test, batch_size=15)
+print("Accuracy score:", score)
+
+model.save(model_path + "model.h5")
+
+json_string = model.to_json()
+with open(model_path + "architecture.json", 'w') as outfile:
+    json.dump(json_string, outfile)
+
 del model
 
 
