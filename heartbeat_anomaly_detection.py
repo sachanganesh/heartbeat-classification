@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.io import wavfile
+import matplotlib
 from matplotlib import pyplot as plt
 
 from PIL import Image, ImageChops
@@ -48,6 +49,8 @@ def trim(im):
         return im.crop(bbox)
 
 print("==== PREPROCESS DATA ====")
+
+matplotlib.use("pdf")
 
 df = pd.read_csv("./data/set_b.csv")
 
