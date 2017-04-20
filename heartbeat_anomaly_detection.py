@@ -20,6 +20,8 @@ from keras.layers.pooling import MaxPooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
 
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+
 def graph_spectrogram(wav_file, save_png=False):
     _, data = get_wav_info(wav_file)
     window = 256
@@ -176,13 +178,16 @@ model = Sequential([
     Activation("softmax")
 ])
 
+model_path = "./models/model_d/"
+
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2)
+checkpoint = ModelCheckpoint(model_path + "best_d.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
+early_stopping = EarlyStopping(monitor='val_loss', patience=3)
 
-model_path = "./models/model_c/"
+history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint, early_stopping])
 
-model.save(model_path + "model_c.h5")
+model.save(model_path + "model_d.h5")
 del model
 
 
