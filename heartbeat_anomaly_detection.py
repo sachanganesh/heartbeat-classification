@@ -73,25 +73,27 @@ for i, _ in df.iterrows():
 
 print("==== GENERATE SPECTROGRAMS ====")
 
-global_size = (496, 369)
+print("... already generated previously ...")
 
-num_imgs = 0
-
-for i, _ in df.iterrows():
-    path = df.ix[i, "fname"].replace("wav", "png")
-    df.ix[i, "iname"] = path
-    graph_spectrogram(df.ix[i, "fname"], True)
-
-    im = trim(Image.open(path))
-    im.save(path)
-
-    if im.size != global_size:
-        print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
-
-    num_imgs = i
-    time.sleep(0.05)
-
-print("Number of images: ", num_imgs)
+# global_size = (496, 369)
+#
+# num_imgs = 0
+#
+# for i, _ in df.iterrows():
+#     path = df.ix[i, "fname"].replace("wav", "png")
+#     df.ix[i, "iname"] = path
+#     graph_spectrogram(df.ix[i, "fname"], True)
+#
+#     im = trim(Image.open(path))
+#     im.save(path)
+#
+#     if im.size != global_size:
+#         print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
+#
+#     num_imgs = i
+#     time.sleep(0.05)
+#
+# print("Number of images: ", num_imgs)
 
 print("==== MORE PREPROCESSING ====")
 
@@ -158,7 +160,7 @@ model = Sequential([
     Dense(800, kernel_initializer="normal"),
     BatchNormalization(),
     Activation("relu"),
-    Dropout(0.2),
+    Dropout(0.5),
     Dense(200, kernel_initializer="normal"),
     BatchNormalization(),
     Activation("relu"),
@@ -172,10 +174,10 @@ model = Sequential([
     Activation("softmax")
 ])
 
-model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.05, momentum=0.9, nesterov=True), metrics=["accuracy"])
+model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-model.fit(X, Y, epochs=500, shuffle=True, batch_size=10, validation_split=0.2)
+model.fit(X, Y, epochs=200, shuffle=True, batch_size=15, validation_split=0.2)
 
-model.save("./model_a.h5")
+model.save("./model_b.h5")
 
 del model
