@@ -178,11 +178,11 @@ model = Sequential([
 
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-history = model.fit(X, Y, epochs=200, shuffle=True, batch_size=15, validation_split=0.2)
+history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2)
 
-model_path = "./models/model_b/"
+model_path = "./models/model_c/"
 
-model.save(model_path + "model_b.h5")
+model.save(model_path + "model_c.h5")
 del model
 
 
