@@ -133,20 +133,41 @@ Y = to_categorical(Y)
 print("==== TRAINING MODEL ====")
 
 model = Sequential([
-    Convolution2D(62, (3, 3), input_shape=(None, None, 3)),
+    Convolution2D(62, (3, 3), input_shape=(369, 496, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Convolution2D(31, (3, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Convolution2D(16, (3, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Convolution2D(9, (3, 3)),
     BatchNormalization(),
     Activation("relu"),
     MaxPooling2D((3, 3)),
     Flatten(),
-    Dense(2265, kernel_initializer="normal"),
+    Dense(800, kernel_initializer="normal"),
     BatchNormalization(),
     Activation("relu"),
+    Dropout(0.2),
+    Dense(200, kernel_initializer="normal"),
+    BatchNormalization(),
+    Activation("relu"),
+    Dropout(0.2),
+    Dense(100, kernel_initializer="normal"),
+    BatchNormalization(),
+    Activation("relu"),
+    Dropout(0.2),
     Dense(2, kernel_initializer="normal"),
     BatchNormalization(),
     Activation("softmax")
 ])
 
-model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
+model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.1, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 model.output_shape
 
