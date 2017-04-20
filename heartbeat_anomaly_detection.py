@@ -47,6 +47,8 @@ def trim(im):
     if bbox:
         return im.crop(bbox)
 
+print("==== PREPROCESS DATA ====")
+
 df = pd.read_csv("./data/set_b.csv")
 
 df = df[pd.notnull(df["label"])]
@@ -66,7 +68,9 @@ for i, _ in df.iterrows():
 
     df.ix[i, "fname"] = path
 
-global_size = (465, 302)
+print("==== GENERATE SPECTROGRAMS ====")
+
+global_size = (496, 369)
 
 for i, _ in df.iterrows():
     path = df.ix[i, "fname"].replace("wav", "png")
@@ -77,9 +81,11 @@ for i, _ in df.iterrows():
     im.save(path)
 
     if im.size != global_size:
-        warnings.warn("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size), UserWarning)
+        print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
 
     time.sleep(0.05)
+
+print("==== MORE PREPROCESSING ====")
 
 map = {
     "normal": 0,
@@ -120,6 +126,8 @@ for _, row in df.iterrows():
 
 Y = to_categorical(Y)
 
+
+print("==== TRAINING MODEL ====")
 
 model = Sequential([
     Convolution2D(62, (3, 3), input_shape=(None, None, 3)),
