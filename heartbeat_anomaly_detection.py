@@ -50,6 +50,8 @@ def trim(im):
     if bbox:
         return im.crop(bbox)
 
+print("==== BEGIN ====")
+
 print("==== PREPROCESS DATA ====")
 
 df = pd.read_csv("./data/set_b.csv")
@@ -176,8 +178,46 @@ model = Sequential([
 
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-model.fit(X, Y, epochs=200, shuffle=True, batch_size=15, validation_split=0.2)
+history = model.fit(X, Y, epochs=200, shuffle=True, batch_size=15, validation_split=0.2)
 
-model.save("./model_b.h5")
+model_path = "./models/model_b/"
 
+model.save(model_path + "model_b.h5")
 del model
+
+
+print("==== BUILDING VISUALS ====")
+
+# summarize history for accuracy
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.savefig(model_path + "accuracy.png",
+            dpi=100, # Dots per inch
+            frameon=False,
+            aspect="normal",
+            bbox_inches="tight",
+            pad_inches=0) # Spectrogram saved as a .png
+plt.close("all")
+
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.savefig(model_path + "loss.png",
+            dpi=100, # Dots per inch
+            frameon=False,
+            aspect="normal",
+            bbox_inches="tight",
+            pad_inches=0) # Spectrogram saved as a .png
+plt.close("all")
+
+del history
+
+print("==== END ====")
