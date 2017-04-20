@@ -77,25 +77,25 @@ print("==== GENERATE SPECTROGRAMS ====")
 
 print("... already generated previously ...")
 
-# global_size = (496, 369)
-#
-# num_imgs = 0
-#
-# for i, _ in df.iterrows():
-#     path = df.ix[i, "fname"].replace("wav", "png")
-#     df.ix[i, "iname"] = path
-#     graph_spectrogram(df.ix[i, "fname"], True)
-#
-#     im = trim(Image.open(path))
-#     im.save(path)
-#
-#     if im.size != global_size:
-#         print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
-#
-#     num_imgs = i
-#     time.sleep(0.05)
-#
-# print("Number of images: ", num_imgs)
+global_size = (496, 369)
+
+num_imgs = 0
+
+for i, _ in df.iterrows():
+    path = df.ix[i, "fname"].replace("wav", "png")
+    df.ix[i, "iname"] = path
+    # graph_spectrogram(df.ix[i, "fname"], True)
+    #
+    # im = trim(Image.open(path))
+    # im.save(path)
+    #
+    # if im.size != global_size:
+    #     print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
+
+    num_imgs = i
+    time.sleep(0.05)
+
+print("Number of images: ", num_imgs)
 
 print("==== MORE PREPROCESSING ====")
 
