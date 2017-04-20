@@ -13,7 +13,7 @@ import warnings
 from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from keras.utils import to_categorical
 
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Activation, Flatten, Dropout
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
@@ -172,8 +172,10 @@ model = Sequential([
     Activation("softmax")
 ])
 
-model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.1, momentum=0.9, nesterov=True), metrics=["accuracy"])
+model.compile(loss="categorical_crossentropy", optimizer=SGD(lr=0.05, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-model.output_shape
+model.fit(X, Y, epochs=500, shuffle=True, batch_size=10, validation_split=0.2)
 
-model.fit(X, Y, epochs=300, shuffle=True, batch_size=10, validation_split=0.2)
+model.save("./model_a.h5")
+
+del model
