@@ -151,7 +151,7 @@ Y = to_categorical(Y)
 
 print("Number of samples:", cnt)
 
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=17)
+# X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=17)
 
 print("==== TRAINING MODEL ====")
 
@@ -196,10 +196,10 @@ model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, n
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
-history = model.fit(X_train, y_train, epochs=50, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
+history = model.fit(X, Y, epochs=50, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
-score = model.evaluate(X_test, y_test, batch_size=15)
-print("Accuracy score:", score)
+# score = model.evaluate(X_test, y_test, batch_size=15)
+# print("Accuracy score:", score)
 
 model.save(model_path + "model.h5")
 
