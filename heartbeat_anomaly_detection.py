@@ -24,7 +24,7 @@ from keras.layers.pooling import MaxPooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
 
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.callbacks import ModelCheckpoint
 
 def graph_spectrogram(wav_file, save_png=False):
     _, data = get_wav_info(wav_file)
@@ -195,9 +195,8 @@ model_path = "./models/model_d/"
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
-early_stopping = EarlyStopping(monitor='val_loss', patience=3)
 
-history = model.fit(X_train, y_train, epochs=50, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint, early_stopping])
+history = model.fit(X_train, y_train, epochs=50, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
 score = model.evaluate(X_test, y_test, batch_size=15)
 print("Accuracy score:", score)
