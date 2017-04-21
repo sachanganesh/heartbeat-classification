@@ -9,6 +9,7 @@ from matplotlib import pyplot as plt
 from PIL import Image, ImageChops
 import time
 import warnings
+import os.path
 
 from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from keras.utils import to_categorical
@@ -19,6 +20,8 @@ from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
+
+from keras.callbacks import ModelCheckpoint
 
 def graph_spectrogram(wav_file, save_png=False):
     _, data = get_wav_info(wav_file)
@@ -79,23 +82,26 @@ print("... already generated previously ...")
 
 global_size = (496, 369)
 
-num_imgs = 0
+gen = False
 
 for i, _ in df.iterrows():
     path = df.ix[i, "fname"].replace("wav", "png")
     df.ix[i, "iname"] = path
-    # graph_spectrogram(df.ix[i, "fname"], True)
-    #
-    # im = trim(Image.open(path))
-    # im.save(path)
-    #
-    # if im.size != global_size:
-    #     print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
 
-    num_imgs = i
+    if not os.path.isfile(path):
+        gen = True
+        graph_spectrogram(df.ix[i, "fname"], True)
+
+        im = trim(Image.open(path))
+        im.save(path)
+
+        if im.size != global_size:
+            print("Variable Image Size: " + str(i) + ", " + str(im.size) + ", " + str(global_size))
+
     time.sleep(0.05)
 
-print("Number of images: ", num_imgs)
+if not gen:
+    print("... already generated previously ...")
 
 print("==== MORE PREPROCESSING ====")
 
@@ -176,11 +182,13 @@ model = Sequential([
     Activation("softmax")
 ])
 
+model_path = "./models/model_d/"
+
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2)
+checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
-model_path = "./models/model_e/"
+history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
 model.save(model_path + "model.h5")
 del model
@@ -200,7 +208,7 @@ plt.savefig(model_path + "accuracy.png",
             frameon=False,
             aspect="normal",
             bbox_inches="tight",
-            pad_inches=0) # Spectrogram saved as a .png
+            pad_inches=0) # Plot saved as a .png
 plt.close("all")
 
 # summarize history for loss
@@ -215,7 +223,7 @@ plt.savefig(model_path + "loss.png",
             frameon=False,
             aspect="normal",
             bbox_inches="tight",
-            pad_inches=0) # Spectrogram saved as a .png
+            pad_inches=0) # Plot saved as a .png
 plt.close("all")
 
 del history
