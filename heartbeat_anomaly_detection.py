@@ -188,7 +188,7 @@ model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, n
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
-history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
+history = model.fit(X, Y, epochs=100, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
 model.save(model_path + "model.h5")
 del model
