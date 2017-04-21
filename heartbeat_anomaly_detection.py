@@ -188,7 +188,7 @@ print("==== TRAINING MODEL ====")
 
 model_path = "./models/vgg19_a/"
 
-model = vgg19.VGG19(include_top=True, weights=None, input_tensor=None, input_shape=(369, 496, 3))
+model = vgg19.VGG19(include_top=False, weights=None, input_tensor=None, input_shape=(369, 496, 3), pooling="max")
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
