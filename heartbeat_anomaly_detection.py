@@ -23,6 +23,8 @@ from keras.optimizers import SGD
 
 from keras.callbacks import ModelCheckpoint
 
+from keras.applications import vgg19
+
 def graph_spectrogram(wav_file, save_png=False):
     _, data = get_wav_info(wav_file)
     window = 256
@@ -181,12 +183,12 @@ print("==== TRAINING MODEL ====")
 #     BatchNormalization(),
 #     Activation("softmax")
 # ])
-# 
+#
 # model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 model_path = "./models/vgg19_a/"
 
-model = keras.applications.vgg19.VGG19(include_top=True, weights=None, input_tensor=None, input_shape=(369, 496, 3))
+model = vgg19.VGG19(include_top=True, weights=None, input_tensor=None, input_shape=(369, 496, 3))
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
