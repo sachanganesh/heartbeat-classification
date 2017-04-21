@@ -1,18 +1,15 @@
 import numpy as np
 import pandas as pd
 from scipy.io import wavfile
-
 import matplotlib
+
 matplotlib.use("pdf")
 from matplotlib import pyplot as plt
-
-from sklearn.model_selection import train_test_split
 
 from PIL import Image, ImageChops
 import time
 import warnings
 import os.path
-import json
 
 from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from keras.utils import to_categorical
@@ -81,6 +78,8 @@ for i, _ in df.iterrows():
 
 print("==== GENERATE SPECTROGRAMS ====")
 
+print("... already generated previously ...")
+
 global_size = (496, 369)
 
 gen = False
@@ -117,7 +116,6 @@ df = pd.DataFrame()
 df["image"] = o_df["iname"]
 df["label"]  = o_df["label"]
 
-# REMOVE EXTRASYSTOLE SAMPLES
 df = df[df.label != "extrastole"]
 
 for i, _ in df.iterrows():
@@ -126,10 +124,7 @@ for i, _ in df.iterrows():
 X = np.array([])
 Y = np.array([])
 
-cnt = 0
-
 for _, row in df.iterrows():
-    cnt += 1
     img = load_img(row.image)
     x = img_to_array(img)
     x = x.reshape((1,) + x.shape)
@@ -149,9 +144,6 @@ for _, row in df.iterrows():
 
 Y = to_categorical(Y)
 
-print("Number of samples:", cnt)
-
-# X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.33, random_state=17)
 
 print("==== TRAINING MODEL ====")
 
@@ -190,23 +182,15 @@ model = Sequential([
     Activation("softmax")
 ])
 
-model_path = "./models/model_d/"
-
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
-history = model.fit(X, Y, epochs=50, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
+history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
-# score = model.evaluate(X_test, y_test, batch_size=15)
-# print("Accuracy score:", score)
+model_path = "./models/model_d/"
 
 model.save(model_path + "model.h5")
-
-json_string = model.to_json()
-with open(model_path + "architecture.json", 'w') as outfile:
-    json.dump(json_string, outfile)
-
 del model
 
 
