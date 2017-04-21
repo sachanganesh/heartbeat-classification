@@ -183,12 +183,12 @@ print("==== TRAINING MODEL ====")
 #     BatchNormalization(),
 #     Activation("softmax")
 # ])
-#
-# model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 model_path = "./models/vgg19_a/"
 
 model = vgg19.VGG19(include_top=False, weights=None, input_tensor=None, input_shape=(369, 496, 3), pooling="max")
+
+model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
