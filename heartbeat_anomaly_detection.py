@@ -147,44 +147,46 @@ Y = to_categorical(Y)
 
 print("==== TRAINING MODEL ====")
 
-model = Sequential([
-    Convolution2D(62, (3, 3), input_shape=(369, 496, 3)),
-    BatchNormalization(),
-    Activation("relu"),
-    MaxPooling2D((3, 3)),
-    Convolution2D(31, (3, 3)),
-    BatchNormalization(),
-    Activation("relu"),
-    MaxPooling2D((3, 3)),
-    Convolution2D(16, (3, 3)),
-    BatchNormalization(),
-    Activation("relu"),
-    MaxPooling2D((3, 3)),
-    Convolution2D(9, (3, 3)),
-    BatchNormalization(),
-    Activation("relu"),
-    MaxPooling2D((3, 3)),
-    Flatten(),
-    Dense(800, kernel_initializer="normal"),
-    BatchNormalization(),
-    Activation("relu"),
-    Dropout(0.5),
-    Dense(200, kernel_initializer="normal"),
-    BatchNormalization(),
-    Activation("relu"),
-    Dropout(0.2),
-    Dense(100, kernel_initializer="normal"),
-    BatchNormalization(),
-    Activation("relu"),
-    Dropout(0.2),
-    Dense(2, kernel_initializer="normal"),
-    BatchNormalization(),
-    Activation("softmax")
-])
+# model = Sequential([
+#     Convolution2D(62, (3, 3), input_shape=(369, 496, 3)),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     MaxPooling2D((3, 3)),
+#     Convolution2D(31, (3, 3)),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     MaxPooling2D((3, 3)),
+#     Convolution2D(16, (3, 3)),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     MaxPooling2D((3, 3)),
+#     Convolution2D(9, (3, 3)),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     MaxPooling2D((3, 3)),
+#     Flatten(),
+#     Dense(800, kernel_initializer="normal"),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     Dropout(0.5),
+#     Dense(200, kernel_initializer="normal"),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     Dropout(0.2),
+#     Dense(100, kernel_initializer="normal"),
+#     BatchNormalization(),
+#     Activation("relu"),
+#     Dropout(0.2),
+#     Dense(2, kernel_initializer="normal"),
+#     BatchNormalization(),
+#     Activation("softmax")
+# ])
+# 
+# model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
-model_path = "./models/model_d/"
+model_path = "./models/vgg19_a/"
 
-model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
+model = keras.applications.vgg19.VGG19(include_top=True, weights=None, input_tensor=None, input_shape=(369, 496, 3))
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
