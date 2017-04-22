@@ -186,7 +186,7 @@ model = Sequential([
     Activation("softmax")
 ])
 
-model_path = "./models/model_f/"
+model_path = "./models/model_g/"
 
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
