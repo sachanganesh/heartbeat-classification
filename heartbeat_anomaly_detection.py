@@ -23,7 +23,7 @@ from keras.optimizers import SGD
 
 from keras.callbacks import ModelCheckpoint
 
-from keras.applications import vgg19
+from keras.applications import vgg16
 
 def graph_spectrogram(wav_file, save_png=False):
     _, data = get_wav_info(wav_file)
@@ -186,7 +186,7 @@ print("==== TRAINING MODEL ====")
 
 model_path = "./models/vgg19_a/"
 
-model = vgg19.VGG19(include_top=False, weights=None, input_tensor=None, input_shape=(369, 496, 3), pooling="max")
+model = vgg16.VGG16(include_top=False, weights=None, input_tensor=None, input_shape=(369, 496, 3), pooling="max")
 
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
@@ -195,6 +195,11 @@ checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=
 history = model.fit(X, Y, epochs=100, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
 model.save(model_path + "model.h5")
+
+d = json.loads(model.to_json())
+with open(model_path + "architecture.json", "w") as outfile:
+    json.dump(d, outfile)
+
 del model
 
 
