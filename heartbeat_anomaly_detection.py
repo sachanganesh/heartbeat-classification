@@ -184,7 +184,7 @@ print("==== TRAINING MODEL ====")
 #     Activation("softmax")
 # ])
 
-model_path = "./models/vgg19_a/"
+model_path = "./models/vgg16_a/"
 
 model = vgg16.VGG16(include_top=False, weights=None, input_tensor=None, input_shape=(369, 496, 3), pooling="max")
 
