@@ -112,7 +112,7 @@ for i, _ in df.iterrows():
 
 print("==== TRAINING MODEL ====")
 
-from keras.preprocessing.image import array_to_img, img_to_array, load_img
+from keras.preprocessing.image import img_to_array, load_img
 from keras.utils import to_categorical
 
 from keras.models import Sequential, load_model
@@ -123,6 +123,8 @@ from keras.layers.normalization import BatchNormalization
 from keras.optimizers import SGD
 
 from keras.callbacks import ModelCheckpoint
+
+import json
 
 r_df = df.sample(frac=1)
 
