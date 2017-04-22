@@ -11,20 +11,6 @@ import time
 import warnings
 import os.path
 
-from keras.preprocessing.image import array_to_img, img_to_array, load_img
-from keras.utils import to_categorical
-
-from keras.models import Sequential, load_model
-from keras.layers.core import Dense, Activation, Flatten, Dropout
-from keras.layers.convolutional import Convolution2D
-from keras.layers.pooling import MaxPooling2D
-from keras.layers.normalization import BatchNormalization
-from keras.optimizers import SGD
-
-from keras.callbacks import ModelCheckpoint
-
-from keras.applications import vgg16
-
 def graph_spectrogram(wav_file, save_png=False):
     _, data = get_wav_info(wav_file)
     window = 256
@@ -123,10 +109,27 @@ df = df[df.label != "extrastole"]
 for i, _ in df.iterrows():
     df.ix[i, "label"] = map[df.ix[i, "label"]]
 
+
+print("==== TRAINING MODEL ====")
+
+from keras.preprocessing.image import array_to_img, img_to_array, load_img
+from keras.utils import to_categorical
+
+from keras.models import Sequential, load_model
+from keras.layers.core import Dense, Activation, Flatten, Dropout
+from keras.layers.convolutional import Convolution2D
+from keras.layers.pooling import MaxPooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.optimizers import SGD
+
+from keras.callbacks import ModelCheckpoint
+
+r_df = df.sample(frac=1)
+
 X = np.array([])
 Y = np.array([])
 
-for _, row in df.iterrows():
+for _, row in r_df.iterrows():
     img = load_img(row.image)
     x = img_to_array(img)
     x = x.reshape((1,) + x.shape)
@@ -146,53 +149,48 @@ for _, row in df.iterrows():
 
 Y = to_categorical(Y)
 
+model = Sequential([
+    Convolution2D(62, (3, 3), input_shape=(369, 496, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Convolution2D(31, (3, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Convolution2D(16, (3, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Convolution2D(9, (3, 3)),
+    BatchNormalization(),
+    Activation("relu"),
+    MaxPooling2D((3, 3)),
+    Flatten(),
+    Dense(800, kernel_initializer="normal"),
+    BatchNormalization(),
+    Activation("relu"),
+    Dropout(0.5),
+    Dense(200, kernel_initializer="normal"),
+    BatchNormalization(),
+    Activation("relu"),
+    Dropout(0.2),
+    Dense(100, kernel_initializer="normal"),
+    BatchNormalization(),
+    Activation("relu"),
+    Dropout(0.2),
+    Dense(2, kernel_initializer="normal"),
+    BatchNormalization(),
+    Activation("softmax")
+])
 
-print("==== TRAINING MODEL ====")
-
-# model = Sequential([
-#     Convolution2D(62, (3, 3), input_shape=(369, 496, 3)),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     MaxPooling2D((3, 3)),
-#     Convolution2D(31, (3, 3)),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     MaxPooling2D((3, 3)),
-#     Convolution2D(16, (3, 3)),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     MaxPooling2D((3, 3)),
-#     Convolution2D(9, (3, 3)),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     MaxPooling2D((3, 3)),
-#     Flatten(),
-#     Dense(800, kernel_initializer="normal"),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     Dropout(0.5),
-#     Dense(200, kernel_initializer="normal"),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     Dropout(0.2),
-#     Dense(100, kernel_initializer="normal"),
-#     BatchNormalization(),
-#     Activation("relu"),
-#     Dropout(0.2),
-#     Dense(2, kernel_initializer="normal"),
-#     BatchNormalization(),
-#     Activation("softmax")
-# ])
-
-model_path = "./models/vgg16_a/"
-
-model = vgg16.VGG16(include_top=False, weights=None, input_tensor=None, input_shape=(369, 496, 3), pooling="max")
+model_path = "./models/model_e/"
 
 model.compile(loss="binary_crossentropy", optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True), metrics=["accuracy"])
 
 checkpoint = ModelCheckpoint(model_path + "best.h5", monitor="val_acc", verbose=1, save_best_only=True, mode="max")
 
-history = model.fit(X, Y, epochs=100, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
+history = model.fit(X, Y, epochs=30, shuffle=True, batch_size=15, validation_split=0.2, callbacks=[checkpoint])
 
 model.save(model_path + "model.h5")
 
