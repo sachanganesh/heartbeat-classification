@@ -66,8 +66,6 @@ for i, _ in df.iterrows():
 
 print("==== GENERATE SPECTROGRAMS ====")
 
-print("... already generated previously ...")
-
 global_size = (496, 369)
 
 gen = False
