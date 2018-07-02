@@ -1,2 +1,1 @@
-best_weights_kl.h5 filter=lfs diff=lfs merge=lfs -text
-best_weights_warp.h5 filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
