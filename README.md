@@ -1,6 +1,6 @@
 # Deep Stethoscope: CNN Heartbeat Classifier
 
-**[Walkthrough of Data Preprocessing & Model Training](Heartbeat Classification Example.ipynb)**
+**[Walkthrough of Data Preprocessing & Model Training](Heartbeat%20Classification%20Example.ipynb)**
 
 ---
 
@@ -28,7 +28,7 @@ While binary cross-entropy and KL-divergence are effective loss functions for op
 
 ### Code
 
-The file [hbutils.py](hbutils.py) contains utility methods for processing the audio and image data. The file [hbmodels.py](hbmodels.py) holds the Keras model architecture. The file [Heartbeat Classification Example.ipynb](Heartbeat Classification Example.ipynb) is a walkthrough of the data preprocessing and model development/training process.
+The file [hbutils.py](hbutils.py) contains utility methods for processing the audio and image data. The file [hbmodels.py](hbmodels.py) holds the Keras model architecture. The file [Heartbeat Classification Example.ipynb](Heartbeat%20Classification%20Example.ipynb) is a walkthrough of the data preprocessing and model development/training process.
 
 ## Results
 
